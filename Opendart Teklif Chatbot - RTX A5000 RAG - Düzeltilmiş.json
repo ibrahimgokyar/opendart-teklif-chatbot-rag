@@ -1,0 +1,300 @@
+{
+  "name": "Opendart Teklif Chatbot - RTX A5000 RAG - Düzeltilmiş",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "web-site-teklif-chat",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://opendart-teklif.opendartakademi.com"
+        }
+      },
+      "id": "d2956b4a-1eb3-488f-a02d-2c34f553996d",
+      "name": "Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        400
+      ],
+      "webhookId": "opendart-web-site-teklif-chat-rag"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "message",
+              "name": "message",
+              "value": "={{ String($json.body.message || '').trim().slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "session",
+              "name": "sessionId",
+              "value": "={{ String($json.body.sessionId || 'anonymous').replace(/[^a-zA-Z0-9-_]/g, '').slice(0, 100) }}",
+              "type": "string"
+            },
+            {
+              "id": "history",
+              "name": "history",
+              "value": "={{ Array.isArray($json.body.history) ? $json.body.history.slice(-8).map(m => ({ role: String(m.role || '').slice(0, 20), content: String(m.content || '').slice(0, 1000) })) : [] }}",
+              "type": "array"
+            },
+            {
+              "id": "locale",
+              "name": "locale",
+              "value": "={{ String($json.body.locale || 'tr-TR').slice(0, 10) }}",
+              "type": "string"
+            },
+            {
+              "id": "origin",
+              "name": "origin",
+              "value": "={{ $json.headers.origin || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "received",
+              "name": "receivedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "77544934-38fc-4615-9ab0-f8ab88586719",
+      "name": "İsteği Doğrula ve Sınırla",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-message",
+              "leftValue": "={{ $json.message.length }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d5bae722-7aa5-401d-b25f-10546bd56393",
+      "name": "Mesaj Geçerli mi?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://rag-teklif.opendartakademi.com/api/v1/chat",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ query: $json.message, session_id: $json.sessionId, history: $json.history, locale: $json.locale, namespace: 'opendart-teklif', top_k: 8, rerank_top_k: 4, min_score: 0.45, include_sources: true }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "id": "a91fe974-dd52-4387-b50a-3c51d2d9a33f",
+      "name": "RTX A5000 RAG API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CjxPzbft3mWhTl4E",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{\n  {\n    \"answer\": $json.answer,\n    \"sources\": $json.sources,\n    \"confidence\": $json.confidence,\n    \"handoff\": $json.handoff,\n    \"suggestedQuestions\": $json.suggestedQuestions\n  }\n}}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://opendart-teklif.opendartakademi.com"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "db9092fe-919c-4cd3-a161-4d25b68d7b3a",
+      "name": "RAG Yanıtını Döndür",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1008,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { answer: 'Lütfen bir soru yazın.', sources: [], suggestedQuestions: ['Kurumsal web sitesi süreci nasıl ilerler?'], confidence: 0, handoff: false } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json; charset=utf-8"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://opendart-teklif.opendartakademi.com"
+              },
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "4c8b4fd0-0616-41a8-996a-8bf32e877578",
+      "name": "Geçersiz İstek Yanıtı",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        752,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## RTX A5000 RAG bağlantısı\n1. RTX A5000 makinesindeki RAG API'yi HTTPS alan adıyla yayınlayın.\n2. HTTP Request URL alanındaki RAG-SUNUCU-ALAN-ADINIZ bölümünü değiştirin.\n3. n8n Credentials içinde Header Auth oluşturun: X-API-Key = güçlü anahtar.\n4. RTX A5000 RAG API düğümünde bu credential'ı seçin.\n5. Workflow'u Publish edin.\n\nTarayıcı RAG makinesine doğrudan bağlanmaz; yalnız n8n Production Webhook'a bağlanır.",
+        "height": 300,
+        "width": 390,
+        "color": 5
+      },
+      "id": "7ad7a278-9232-42b7-995b-292efabe973c",
+      "name": "Kurulum Notu",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Webhook": {
+      "main": [
+        [
+          {
+            "node": "İsteği Doğrula ve Sınırla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "İsteği Doğrula ve Sınırla": {
+      "main": [
+        [
+          {
+            "node": "Mesaj Geçerli mi?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mesaj Geçerli mi?": {
+      "main": [
+        [
+          {
+            "node": "RTX A5000 RAG API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Geçersiz İstek Yanıtı",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RTX A5000 RAG API": {
+      "main": [
+        [
+          {
+            "node": "RAG Yanıtını Döndür",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "71b07452-f80b-4418-be30-3b82e2ef738b",
+  "meta": {
+    "instanceId": "9b0bb58ab7f9fb9ec08b82d47eb8d2b03d4f06ebc9e6f3959041ac89e5a2dd62"
+  },
+  "id": "Tfi8bd1p7V1dIKK8",
+  "tags": []
+}
