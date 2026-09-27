@@ -1,0 +1,20 @@
+OPENDART TEKLİF CHATBOTU KURULUMU
+
+1. index.html, style.css, app.js ve web.config dosyalarını C:\inetpub\teklif klasörüne kopyalayın.
+2. Opendart_Teklif_Chatbot_RAG_n8n_Workflow.json dosyasını n8n içinde Import from File ile içe aktarın.
+3. RTX A5000 RAG API düğümündeki URL'yi gerçek HTTPS RAG API adresinizle değiştirin.
+4. n8n Credentials içinde Header Auth oluşturun: X-API-Key = RAG servisinde tanımladığınız güçlü anahtar.
+5. RTX A5000 RAG API düğümünde bu credential'ı seçin.
+6. Chat Webhook düğümünde Path değerinin web-site-teklif-chat olduğunu kontrol edin.
+7. Allowed Origins değeri https://teklif.opendartakademi.com olmalıdır.
+8. Workflow'u Publish edin.
+9. app.js içindeki chatWebhookUrl Production URL ile aynıdır:
+   https://techcareer-n8n.app.n8n.cloud/webhook/web-site-teklif-chat
+10. Web sayfasını Ctrl+F5 ile yenileyin ve chatbot üzerinden soru sorun.
+11. Sonucu n8n Executions bölümünden kontrol edin.
+
+NOTLAR
+- Execute workflow düğmesine canlı kullanımda basılmaz.
+- API anahtarı app.js içine eklenmez.
+- Tarayıcı doğrudan RTX A5000 makinesine bağlanmaz; n8n güvenli aracı katmandır.
+- Ayrıntılı sunucu mimarisi ve API sözleşmesi RAG_MIMARISI.md dosyasındadır.

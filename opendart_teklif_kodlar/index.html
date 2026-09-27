@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Opendart Akademi web sitesi teklif formu ve teklif asistanı">
+    <title>Web Sitesi Teklifi | Opendart Akademi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="sayfa">
+        <div class="teklif-yerlesimi">
+            <section class="teklif-kutusu" aria-labelledby="teklifBasligi">
+                <div class="baslik-alani">
+                    <span class="marka">OPENDART AKADEMİ</span>
+                    <h1 id="teklifBasligi">Web Siteniz İçin Teklif Alın</h1>
+                    <p>Projenizle ilgili temel bilgileri iletin. Talebinizi inceleyerek sizinle iletişime geçelim.</p>
+                </div>
+
+                <form id="teklifFormu">
+                    <div class="iki-sutun">
+                        <div class="form-grubu">
+                            <label for="ad">Adınız</label>
+                            <input type="text" id="ad" name="ad" maxlength="50" autocomplete="given-name" required>
+                        </div>
+                        <div class="form-grubu">
+                            <label for="soyad">Soyadınız</label>
+                            <input type="text" id="soyad" name="soyad" maxlength="50" autocomplete="family-name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grubu">
+                        <label for="email">E-posta adresiniz</label>
+                        <input type="email" id="email" name="email" maxlength="150" autocomplete="email" required>
+                    </div>
+
+                    <div class="form-grubu">
+                        <label for="websiteAdi">Teklif almak istediğiniz web sitesi</label>
+                        <input type="text" id="websiteAdi" name="websiteAdi" maxlength="150" placeholder="Örneğin: Kurumsal firma web sitesi" required>
+                    </div>
+
+                    <div class="form-grubu">
+                        <label for="websiteTuru">Web sitesi türü</label>
+                        <select id="websiteTuru" name="websiteTuru" required>
+                            <option value="">Seçiniz</option>
+                            <option value="Kurumsal Web Sitesi">Kurumsal Web Sitesi</option>
+                            <option value="E-Ticaret Sitesi">E-Ticaret Sitesi</option>
+                            <option value="Eğitim Platformu">Eğitim Platformu</option>
+                            <option value="Kişisel Web Sitesi">Kişisel Web Sitesi</option>
+                            <option value="Mobil Uygulama">Mobil Uygulama</option>
+                            <option value="Diğer">Diğer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grubu">
+                        <label for="aciklama">Projeniz hakkında kısa bilgi</label>
+                        <textarea id="aciklama" name="aciklama" rows="6" maxlength="2000" placeholder="Web sitenizde bulunmasını istediğiniz özellikleri yazabilirsiniz." required></textarea>
+                    </div>
+
+                    <label class="onay-alani">
+                        <input type="checkbox" id="kvkkOnay" required>
+                        <span>İletişim bilgilerimin teklif talebimin değerlendirilmesi amacıyla kullanılmasını kabul ediyorum.</span>
+                    </label>
+
+                    <button type="submit" id="gonderButonu">Teklif Talebi Gönder</button>
+                    <div id="sonucMesaji" class="sonuc-mesaji" role="status" aria-live="polite"></div>
+                </form>
+            </section>
+
+            <aside class="chat-kutusu" aria-labelledby="chatBasligi">
+                <header class="chat-baslik">
+                    <div class="asistan-simgesi" aria-hidden="true">AI</div>
+                    <div>
+                        <h2 id="chatBasligi">Teklif Asistanı</h2>
+                        <p><span class="durum-noktasi"></span> Size yardımcı olmaya hazır</p>
+                    </div>
+                </header>
+
+                <div id="chatMesajlari" class="chat-mesajlari" role="log" aria-live="polite" aria-relevant="additions">
+                    <div class="mesaj asistan-mesaji">
+                        Merhaba! Web sitesi türleri, proje süreci ve teklif hazırlığı hakkında sorularınızı yanıtlayabilirim.
+                    </div>
+                </div>
+
+                <div class="hizli-sorular" aria-label="Örnek sorular">
+                    <button type="button" class="hizli-soru" data-question="Kurumsal web sitesi süreci nasıl ilerliyor?">Süreç nasıl ilerler?</button>
+                    <button type="button" class="hizli-soru" data-question="Bir web sitesi için hangi bilgiler gerekli?">Hangi bilgiler gerekli?</button>
+                    <button type="button" class="hizli-soru" data-question="E-ticaret sitesi geliştirebiliyor musunuz?">E-ticaret sitesi</button>
+                </div>
+
+                <form id="chatFormu" class="chat-formu">
+                    <label class="sr-only" for="chatInput">Mesajınız</label>
+                    <textarea id="chatInput" rows="2" maxlength="1000" placeholder="Sorunuzu yazın..." required></textarea>
+                    <button type="submit" id="chatGonderButonu" class="chat-gonder" aria-label="Mesajı gönder">Gönder</button>
+                </form>
+                <p class="chat-notu">Asistan genel bilgi verir; kesin fiyat ve teslim süresi proje kapsamı incelendikten sonra belirlenir.</p>
+            </aside>
+        </div>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>

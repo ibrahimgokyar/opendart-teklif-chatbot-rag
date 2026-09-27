@@ -1,0 +1,390 @@
+{
+  "name": "Opendart_Teklif",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ASfhuR4O1xzWtBmwHX_CTpiw5AUNjvs0jJJktJMuHi4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sayfa1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ASfhuR4O1xzWtBmwHX_CTpiw5AUNjvs0jJJktJMuHi4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Ad Soyad",
+              "displayName": "Ad Soyad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Gönderim Tarihi ",
+              "displayName": "Gönderim Tarihi ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WebSite",
+              "displayName": "WebSite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Web Site Türü",
+              "displayName": "Web Site Türü",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Açıklama",
+              "displayName": "Açıklama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        0
+      ],
+      "id": "518e0d75-deb3-4c44-ab25-00c52acb298d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "X8dWz11mts2olEGN",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8b24f25-c61d-4712-b964-15634d4cd167",
+              "name": "Ad Soyad",
+              "value": "={{ $json.body.ad + \" \" + $json.body.soyad }}",
+              "type": "string"
+            },
+            {
+              "id": "f016eb78-5d14-4dd1-a9a9-e7189dbeb26f",
+              "name": "Email",
+              "value": "={{ $json.body.email}}",
+              "type": "string"
+            },
+            {
+              "id": "9f96cf6b-3fc3-4c47-bbfb-672b172f284b",
+              "name": "WebSite",
+              "value": "={{ $json.body.websiteAdi }}",
+              "type": "string"
+            },
+            {
+              "id": "7db5308d-4a7e-4cc0-8f6a-ac59ae0f0b6a",
+              "name": "Gönderim Tarihi ",
+              "value": "={{ $json.body.talepTarihi }}",
+              "type": "string"
+            },
+            {
+              "id": "84e58826-46de-42a1-92fc-a91d2d4e6e8e",
+              "name": "Web Site Türü",
+              "value": "={{ $json.body.websiteTuru }}",
+              "type": "string"
+            },
+            {
+              "id": "f2bd7f11-8a53-42d3-826f-57c02b038952",
+              "name": "Açıklama",
+              "value": "={{ $json.body.aciklama }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        48,
+        16
+      ],
+      "id": "7facab2f-943a-4dba-86b0-85b86dc72cb2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Aşağıdaki web sitesinden yola çıkarak teklif oluştur. {{ $json.WebSite }}",
+        "options": {
+          "systemMessage": "Sen bir Seo web sitesi uzmanısın. Bu agentta görevin sana gelen bilgilerden yola çıkarak söz konusu web sitesini analiz edip teklif oluşturmalısın. \n\nOluşturacağın teklifte yer alması gereken bilgiler \nÇalışma planı; (Detaylı bir seo planı içermelidir)\nfiyat ; KDV şeklinde iletmelisin \ntahmini süre "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        528,
+        0
+      ],
+      "id": "0b8aa923-1d6d-4145-b1f2-16c62c136531",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini",
+          "cachedResultName": "gpt-5-mini",
+          "cachedResultUrl": ""
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        208
+      ],
+      "id": "319a8220-71ec-4772-8485-d621601789b1",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "h75HYx79Khg2oa1y",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "1aH2pFNnr0u7WrapZMVkkXkuI0Ssphr-z",
+        "title": "={{ $('Edit Fields').item.json.WebSite }} - Teklif"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "67c20b8d-bea0-4fda-845e-34dad73b8d2a",
+      "name": "Create a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "qLewA2t8yhYMUQzM",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('AI Agent').item.json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "16bf796c-17ce-4447-a415-ac01740e6d1d",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "dbtlU4H4BMGvwq5C",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.Email }}",
+        "subject": "={{ $('Edit Fields').item.json.WebSite }} Hakkında Teklif",
+        "message": "=Merhaba {{ $('Edit Fields').item.json['Ad Soyad'] }},\n\n{{ $('Edit Fields').item.json.WebSite }} web siteniz hakkında... hakkında mailinizi aldık. Yaptığımız analizler sonucunda websiteniz için yapacağımız SEO çalışmamınız detaylarını belirledik. \n\nSöz konusun çalışma planına aşağıdaki linkten ulaşabilirsiniz. \n\nhttps://docs.google.com/document/d/{{ $json.documentId }}\n\nDönüşünüzü bekliyoruz. ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "6df1b01e-b3a5-4ff5-a898-91576218ffed",
+      "name": "Send a message",
+      "webhookId": "644734d6-156c-4c29-9c56-d987f8ea08be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3rFJuLB9hauNCKen",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "web-site-teklif",
+        "options": {
+          "allowedOrigins": "https://teklif.opendartakademi.com"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        32
+      ],
+      "id": "a20aaa3f-5e65-460c-8fa3-06cdebf68144",
+      "name": "Webhook",
+      "webhookId": "5d995ad3-ab5f-4db7-b2ab-1282cad088da"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b06edbae-948d-4e7d-b53b-ff52d5310674",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "120d06117a4c4c5155e98d68b5f14309aa3de6986b64f8441bb587bade2b5f0f"
+  },
+  "nodeGroups": [],
+  "id": "86RViF12DpSutAWB",
+  "tags": []
+}
